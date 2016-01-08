@@ -84,6 +84,9 @@ class Recommendation:
 				if other_key in dataset[key]:
 					continue
 
+				if score <= 0:
+					continue
+
 				# Weighted sum of value times similarity score
 				weighted_inner_values.setdefault(other_key, 0)
 				weighted_inner_values[other_key] += score * dataset[key][inner_key]
@@ -112,6 +115,10 @@ class Recommendation:
 
 			# Fetching common inner keys to calculate similarity score
 			common_inner_keys = self.fetchCommonInnerKeys(key, other_key)
+
+			# If there is no common inner key, skip this other keys
+			if len(common_inner_keys) == 0:
+				continue
 
 			x = [dataset[key][inner_key] for inner_key in common_inner_keys]
 			y = [dataset[other_key][inner_key] for inner_key in common_inner_keys]
