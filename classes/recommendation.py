@@ -23,7 +23,7 @@ class Recommendation:
 		self.dataset = dataset
 
 	def collaborativeRecommendation(self, key, n=3):
-		'''Return n scores along with inner keys which are top match'''
+		'''Return list of n top match scores along with inner keys'''
 
 		dataset = self.dataset
 		weighted_inner_values = {}
@@ -49,8 +49,11 @@ class Recommendation:
 
 			for inner_key in dataset[other_key]:
 				if inner_key not in dataset[key] or dataset[key][inner_key] == 0:
+					# Weighted sum of value times similarity score
 					weighted_inner_values.setdefault(inner_key, 0)
 					weighted_inner_values[inner_key] += score * dataset[other_key][inner_key]
+
+					# Sum of similarity score
 					total_scores.setdefault(inner_key, 0)
 					total_scores[inner_key] += score
 
@@ -62,8 +65,39 @@ class Recommendation:
 
 		return scores[0:n]
 
-	def collaborativeFiltering(self, key, n=3):
-		'''Return n scores along with other keys which are top match'''
+	def contentBasedRecommendation(self, content_based_filtered_dataset, key, n=3):
+		'''Return list of n top match scores along with inner keys'''
+
+		dataset = self.dataset
+		weighted_inner_values = {}
+		total_scores = {}
+
+		# Loop over inner keys of current key
+		for inner_key in dataset[key]:
+			# Loop over keys similiar to inner key
+			for (score, other_key) in content_based_filtered_dataset[inner_key]:
+				# Ignore if other_key is present in dataset of current key
+				if other_key in dataset[key]:
+					continue
+
+				# Weighted sum of value times similarity score
+				weighted_inner_values.setdefault(other_key, 0)
+				weighted_inner_values[other_key] += score * dataset[key][inner_key]
+				
+				# Sum of similarity score
+				total_scores.setdefault(other_key, 0)
+				total_scores[other_key] += score
+
+		scores = [(weighted_inner_values[key]/total_scores[key], key) for key in weighted_inner_values]
+
+		# Sorting the list so that highest score appear at the top
+		scores.sort()
+		scores.reverse()
+
+		return scores[0:n]
+
+	def contentBasedFiltering(self, key, n=3):
+		'''Return list of n top match scores along with other keys'''
 
 		dataset = self.dataset
 		scores = []
@@ -87,6 +121,18 @@ class Recommendation:
 		scores.reverse()
 
 		return scores[0:n]
+
+	def contentBasedFilteringAll(self, n=10):
+		'''Return dict of all keys and corresponding list of n top match scores along with other key'''
+
+		dataset = self.dataset
+		result = {}
+
+		for key in dataset:
+			scores = self.contentBasedFiltering(key, n)
+			result[key] = scores
+
+		return result
 
 	# Helper functions
 
