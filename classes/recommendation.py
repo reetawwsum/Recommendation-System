@@ -36,6 +36,10 @@ class Recommendation:
 			# Fetching common inner keys to calculate similarity score
 			common_inner_keys = self.fetchCommonInnerKeys(key, other_key)
 
+			# If there is no common inner key, skip this other keys
+			if len(common_inner_keys) == 0:
+				continue
+
 			x = [dataset[key][inner_key] for inner_key in common_inner_keys]
 			y = [dataset[other_key][inner_key] for inner_key in common_inner_keys]
 
