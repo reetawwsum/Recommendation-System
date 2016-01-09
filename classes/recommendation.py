@@ -1,3 +1,5 @@
+import time
+import numpy as np
 from similarity import Similarity
 
 class Recommendation:
@@ -133,16 +135,41 @@ class Recommendation:
 
 		return scores[0:n]
 
-	def contentBasedFilteringAll(self, n=10):
+	def contentBasedFilteringAll(self, n=50):
 		'''Return dict of all keys and corresponding list of n top match scores along with other key'''
 
+		print 'Building item based filtered dataset'
 		dataset = self.dataset
 		result = {}
 
+		C = 0
+		old = int(time.time())
+		epoch_left = (len(dataset)/100) + 1
+		difference = []
+
 		for key in dataset:
+
+			# Time keeping
+			C += 1
+			if C % 100 == 0:
+				epoch_left -= 1
+				new = int(time.time())
+				difference.append(new-old)
+				old = new
+				time_left = int(np.mean(difference)) * epoch_left
+
+				minutes = time_left / 60
+				seconds = time_left % 60
+
+				if (minutes):
+					print "%d minutes %d seconds left" % (time_left/60, time_left%60)
+				else:
+					print "%d seconds left" % seconds
+
 			scores = self.contentBasedFiltering(key, n)
 			result[key] = scores
 
+		print 'Filtered dataset built'
 		return result
 
 	# Helper functions
