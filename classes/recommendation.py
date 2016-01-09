@@ -135,7 +135,7 @@ class Recommendation:
 
 		return scores[0:n]
 
-	def contentBasedFilteringAll(self, n=50):
+	def contentBasedFilteringAll(self, n=50, verbose=False):
 		'''Return dict of all keys and corresponding list of n top match scores along with other key'''
 
 		print 'Building item based filtered dataset'
@@ -161,10 +161,11 @@ class Recommendation:
 				minutes = time_left / 60
 				seconds = time_left % 60
 
-				if (minutes):
-					print "%d minutes %d seconds left" % (time_left/60, time_left%60)
-				else:
-					print "%d seconds left" % seconds
+				if verbose:
+					if (minutes):
+						print "%d minutes %d seconds left" % (time_left/60, time_left%60)
+					else:
+						print "%d seconds left" % seconds
 
 			scores = self.contentBasedFiltering(key, n)
 			result[key] = scores
