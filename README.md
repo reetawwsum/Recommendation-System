@@ -19,16 +19,19 @@ suggestions = recommend.contentBasedRecommendation(filtered_dataset, Person)
 
 ## Motivation
 Recommendation System solves two categories of question.
+
 1. I am Reet. Suggest me some more ***things***.
 2. I like ***thing***. Suggest me some more.
 
 Here, ***thing*** can be replace with anything.
 For e.g In case of movies dataset:
+
 1. I am Reet. Suggest me some more ***movies***.
 2. I like ***Star Wars***. Suggest me some more movies like this.
 
 ## Installation
 Requirements:
+
 1. Python (2.7.10)
 2. NumPy package
 3. scikit-learn package
